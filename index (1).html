@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แบบรายงานการวิจัย 31910-2029</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--p:#F472B6;--pd:#BE185D;--b:#60A5FA;--bd:#1D4ED8;--soft:#FFF1F7;--ink:#3B1030}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:var(--soft);font-family:'Kanit',system-ui,sans-serif;color:var(--ink);display:grid;place-items:center;overflow:hidden}
+.stage{width:min(100vw,calc(100vh*16/9));aspect-ratio:16/9;container-type:inline-size;position:relative}
+.slide{position:absolute;inset:2cqw;background:#fff;border-radius:2.2cqw;box-shadow:0 .4cqw 2cqw rgba(190,24,93,.10);padding:3.4cqw 4cqw 3cqw;display:none;flex-direction:column}
+.slide.on{display:flex}
+.tag{position:absolute;top:1.8cqw;left:2.4cqw;background:var(--soft);color:var(--pd);font-size:1.15cqw;font-weight:500;padding:.35cqw 1.1cqw;border-radius:5cqw;border:1px solid #FBCFE8}
+.head{display:flex;justify-content:space-between;align-items:center;margin-top:2.2cqw;gap:2cqw}
+h1,h2{font-weight:800;font-size:4cqw;line-height:1.25}
+.title h1{font-size:4.6cqw}
+.g{background:linear-gradient(90deg,var(--p),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.ic{width:6cqw;height:6cqw;flex:none;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--b));display:grid;place-items:center;transition:transform .25s}
+.ic svg{width:52%;height:52%;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ic:hover{transform:scale(1.12)}
+.ic.s{width:3.6cqw;height:3.6cqw;background:rgba(255,255,255,.28)}
+.sub{font-size:1.7cqw;margin-top:.8cqw;color:#6B2A52;font-weight:300}
+.cards{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:1.6cqw;margin-top:2.2cqw;min-height:0}
+.card{border-radius:1.6cqw;padding:1.8cqw;display:flex;flex-direction:column;gap:.9cqw}
+.card h3{font-size:1.85cqw;font-weight:700}
+.card p{font-size:1.5cqw;line-height:1.55;font-weight:400}
+.c1{background:linear-gradient(145deg,#E0509A,var(--pd));color:#fff}
+.c2{background:#FFE0EE}
+.c3{background:#DBEAFE;border:.15cqw solid var(--b)}
+.c3 h3{color:var(--bd)}
+.c3 .ic.s{background:var(--b)}
+.c2 .ic.s{background:var(--p)}
+.slide.on .card{animation:up .6s cubic-bezier(.2,.8,.2,1) both}
+.slide.on .card:nth-child(1){animation-delay:.1s}
+.slide.on .card:nth-child(2){animation-delay:.35s}
+.slide.on .card:nth-child(3){animation-delay:.6s}
+@keyframes up{from{opacity:0;transform:translateY(3cqw)}to{opacity:1;transform:none}}
+.foot{display:flex;justify-content:space-between;align-items:center;margin-top:1.4cqw;font-size:1.1cqw;color:#9D5F82}
+.nav{display:flex;gap:.8cqw}
+.nav button{width:2.6cqw;height:2.6cqw;border-radius:50%;border:1px solid #FBCFE8;background:#fff;color:var(--pd);font:inherit;font-size:1.3cqw;cursor:pointer}
+.nav button:hover{background:var(--soft)}
+.nav button:focus-visible{outline:.2cqw solid var(--b)}
+.num{font-weight:700;color:var(--pd);font-size:1.3cqw}
+@media (prefers-reduced-motion:reduce){.slide.on .card{animation:none}.ic{transition:none}}
+</style>
+</head>
+<body>
+<div class="stage" id="stage"></div>
+<script>
+const I={
+book:'<path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/>',
+target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+flow:'<rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="15" width="6" height="6" rx="1"/><path d="M9 6h6a3 3 0 0 1 3 3v6"/>',
+frame:'<path d="M4 4h16v16H4z"/><path d="M4 12h16M12 4v16"/>',
+flask:'<path d="M9 3h6M10 3v6L4 20a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1l-6-11V3"/>',
+search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+chart:'<path d="M3 3v18h18"/><path d="M7 15v3M12 9v9M17 5v13"/>',
+check:'<path d="M20 6 9 17l-5-5"/>',
+rocket:'<path d="M12 15 9 12c1-4 4-8 12-9 0 8-4 11-9 12zM9 12H4s.5-3 2-4M12 15v5s3-.5 4-2"/>',
+users:'<circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M17 4a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6"/>',
+pencil:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+bulb:'<path d="M9 18h6M10 22h4M12 2a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 2z"/>',
+tag:'<path d="M3 12V3h9l9 9-9 9z"/><circle cx="7.5" cy="7.5" r="1"/>',
+gift:'<rect x="3" y="8" width="18" height="5"/><path d="M12 8v13M5 13v8h14v-8M8 8a2.5 2.5 0 1 1 4-2 2.5 2.5 0 1 1 4 2"/>'
+};
+const D=[
+{t:'ปก',ic:'book',h:'แบบรายงาน<span class="g">การวิจัย</span>',s:'รายวิชาโครงงานด้านเทคโนโลยีธุรกิจดิจิทัล (31910-2029)',cls:'title',
+ c:[['users','ผู้นำเสนอ','นางสาวสุปรีดา สังวาลย์ (ครูปู) ครูประจำแผนกวิชาเทคโนโลยีธุรกิจดิจิทัล'],['flag','สำหรับ','นักศึกษา ปวส.2 วิทยาลัยการอาชีพหัวไทร'],['rocket','วันนี้เราจะ','ไล่ดูรายงานทีละบท แล้วลงมือทำไปพร้อมกัน']]},
+{t:'บทที่ 1 บทนำ',ic:'bulb',h:'ความเป็นมาและ<span class="g">ความสำคัญ</span>',s:'เปิดเรื่องให้คนอ่านรู้ว่า “ทำไมต้องทำเรื่องนี้”',
+ c:[['search','เล่าปัญหา','เริ่มจากสิ่งที่เห็นใกล้ตัว เช่น ร้านค้าชุมชนขายออนไลน์แล้วยอดไม่โต'],['target','บอกว่าสำคัญยังไง','ถ้าไม่แก้จะเกิดอะไร และใครได้ประโยชน์เมื่อแก้ได้'],['pencil','ลงมือทำ','เขียน 1 ย่อหน้า: ปัญหา → ผลกระทบ → แนวทางแก้']]},
+{t:'บทที่ 1 บทนำ',ic:'target',h:'วัตถุประสงค์และ<span class="g">สมมติฐาน</span>',s:'บอกว่าจะทำอะไร และคาดว่าผลจะออกมาแบบไหน',
+ c:[['check','วัตถุประสงค์','ขึ้นต้นด้วยคำกริยา เช่น เพื่อศึกษา เพื่อเปรียบเทียบ เพื่อพัฒนา'],['flask','สมมติฐาน','คำตอบที่คาดไว้ล่วงหน้า ต้องตรวจสอบได้ด้วยข้อมูลจริง'],['pencil','ลงมือทำ','เขียนวัตถุประสงค์ 2–3 ข้อ แล้วตั้งสมมติฐานให้ตรงกัน']]},
+{t:'บทที่ 1 บทนำ',ic:'frame',h:'กรอบแนวคิดและ<span class="g">ขอบเขต</span>',s:'วาดภาพรวมงานวิจัย และขีดเส้นว่าทำแค่ไหน',
+ c:[['flow','กรอบแนวคิด','แผนภาพสั้นๆ ตัวแปรต้น → ตัวแปรตาม'],['frame','ขอบเขตการวิจัย','กำหนดเนื้อหา กลุ่มตัวอย่าง พื้นที่ และช่วงเวลา'],['pencil','ลงมือทำ','วาดกรอบแนวคิดของกลุ่มคุณ 1 แผนภาพ']]},
+{t:'บทที่ 1 บทนำ',ic:'tag',h:'นิยามศัพท์และ<span class="g">ประโยชน์ที่ได้รับ</span>',s:'ทำให้ทุกคนเข้าใจคำเดียวกัน และเห็นคุณค่าของงาน',
+ c:[['tag','นิยามศัพท์','อธิบายคำสำคัญตามที่ใช้ในงานของเรา ไม่ใช่ตามพจนานุกรม'],['gift','ประโยชน์ที่คาดว่าจะได้รับ','บอกว่าใคร ได้อะไร เช่น ผู้ประกอบการ นักศึกษา ชุมชน'],['pencil','ลงมือทำ','เลือกคำสำคัญ 3 คำ แล้วเขียนนิยามเชิงปฏิบัติการ']]},
+{t:'บทที่ 2',ic:'book',h:'แนวคิด ทฤษฎี และ<span class="g">งานวิจัยที่เกี่ยวข้อง</span>',s:'ยืนบนไหล่ของคนที่ทำมาก่อน',
+ c:[['book','แนวคิดและทฤษฎี','เลือกเฉพาะที่เกี่ยวกับตัวแปรของเรา อ้างอิงให้ครบ'],['search','งานวิจัยที่เกี่ยวข้อง','สรุปว่าใครทำอะไร ได้ผลยังไง แล้วงานเราต่างตรงไหน'],['pencil','ลงมือทำ','หางานวิจัย 5 เรื่อง แล้วสรุปเป็นตารางเปรียบเทียบ']]},
+{t:'บทที่ 3',ic:'flask',h:'วิธีดำเนินการ<span class="g">วิจัย</span>',s:'เล่าให้ชัดจนคนอื่นทำซ้ำได้',
+ c:[['users','ประชากรและกลุ่มตัวอย่าง','ระบุจำนวนและวิธีเลือก เช่น สุ่มอย่างง่าย'],['flask','เครื่องมือและการเก็บข้อมูล','แบบสอบถามหรือสัมภาษณ์ ตรวจคุณภาพโดยผู้เชี่ยวชาญ'],['pencil','ลงมือทำ','สร้างแบบสอบถามฉบับร่าง แล้วทดลองกับเพื่อน 5 คน']]},
+{t:'บทที่ 4',ic:'chart',h:'ผลการ<span class="g">วิจัย</span>',s:'ให้ข้อมูลเล่าเรื่องเอง ไม่ใส่ความเห็น',
+ c:[['chart','วิเคราะห์ข้อมูล','ใช้ค่าร้อยละ ค่าเฉลี่ย และส่วนเบี่ยงเบนมาตรฐาน'],['frame','นำเสนอผล','ตารางหรือกราฟ พร้อมอธิบายสั้นๆ ใต้ภาพ เรียงตามวัตถุประสงค์'],['pencil','ลงมือทำ','คีย์ข้อมูลลง Excel แล้วทำตารางผล 1 ตาราง']]},
+{t:'บทที่ 5',ic:'check',h:'สรุป อภิปราย<span class="g">และข้อเสนอแนะ</span>',s:'ปิดงานให้ครบ ตอบกลับไปที่วัตถุประสงค์',
+ c:[['check','สรุปผล','ตอบวัตถุประสงค์ทีละข้อ ตรงและกระชับ'],['bulb','อภิปรายผล','อธิบายว่าทำไมได้ผลแบบนี้ ผูกกับทฤษฎีในบทที่ 2'],['pencil','ลงมือทำ','เขียนข้อเสนอแนะ 2 ข้อ: ใช้ประโยชน์ + วิจัยต่อ']]},
+{t:'ส่งท้าย',ic:'rocket',h:'พร้อม<span class="g">ลงมือ</span>กันหรือยัง?',s:'ครูปูรอดูผลงานของทุกกลุ่มนะ',
+ c:[['pencil','เริ่มจากบทที่ 1','ทำให้เสร็จก่อน แล้วค่อยต่อบทถัดไป'],['users','ปรึกษากันได้','ติดตรงไหนมาถามครูปูได้ตลอด'],['check','ส่งงานตามนัด','แบ่งงานในกลุ่มให้ชัด จะได้ไม่เร่งช่วงท้าย']]}
+];
+I.flag='<path d="M4 22V4M4 4h13l-2 4 2 4H4"/>';
+const svg=n=>`<svg viewBox="0 0 24 24">${I[n]}</svg>`;
+const st=document.getElementById('stage');
+st.innerHTML=D.map((d,i)=>`<section class="slide ${d.cls||''}" aria-label="หน้า ${i+1}">
+<span class="tag">${d.t}</span>
+<div class="head"><div><h2>${d.h}</h2><p class="sub">${d.s}</p></div><div class="ic">${svg(d.ic)}</div></div>
+<div class="cards">${d.c.map((c,j)=>`<div class="card c${j+1}"><div class="ic s">${svg(c[0])}</div><h3>${c[1]}</h3><p>${c[2]}</p></div>`).join('')}</div>
+<div class="foot"><span>ครูปู · แผนกวิชาเทคโนโลยีธุรกิจดิจิทัล</span><div class="nav"><button aria-label="ก่อนหน้า" data-d="-1">‹</button><button aria-label="ถัดไป" data-d="1">›</button></div><span class="num">${i+1} / ${D.length}</span></div>
+</section>`).join('');
+const S=[...document.querySelectorAll('.slide')];
+let cur=0;
+function go(n){cur=Math.max(0,Math.min(S.length-1,n));S.forEach((s,i)=>s.classList.toggle('on',i===cur));history.replaceState(null,'','#'+(cur+1))}
+st.addEventListener('click',e=>{const b=e.target.closest('button[data-d]');if(b)go(cur+ +b.dataset.d)});
+addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(cur+1)}if(['ArrowLeft','PageUp'].includes(e.key))go(cur-1)});
+let x0=null;
+st.addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});
+st.addEventListener('touchend',e=>{if(x0===null)return;const d=e.changedTouches[0].clientX-x0;if(Math.abs(d)>50)go(cur+(d<0?1:-1));x0=null});
+go((parseInt(location.hash.slice(1))||1)-1);
+</script>
+</body>
+</html>
